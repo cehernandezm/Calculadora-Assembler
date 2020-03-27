@@ -46,6 +46,8 @@ endm
     
     msgMenu db 10,"1. Ingresar Funcion f(x)",10,"2. Funcion Memoria",10,"3. Derivada de F(x)",10,"4. Integral F(x)",10,"5. Graficar Funciones",10,"6. Reporte",10,"7. Reporte Calculadora",10,"8. Salir",10,"$"
 
+    msgMenuGrafica db 10,"1. Graficar Funcion Original",10,"2. Graficar Derivada",10,"3.Graficar Integral",10,"4. Regresar",10,"$"
+
     msgDespedida db 10,"Adios :(",10,"$"
 
     msgCoeficiente4 db 10,"Coeficiente de x4: $"
@@ -53,14 +55,21 @@ endm
     msgCoeficiente2 db 10,"Coeficiente de x2: $"
     msgCoeficiente1 db 10,"Coeficiente de x1: $"
 
+    msgValorInicial db 10,"Ingrese el valor Inicial: $"
+    msgValorFinal db 10,"Ingrese el valor Final: $"
     msgErrorCoeficiente db 10,"Se ingreso un valor erroneo $"
+    msgErrorFuncion db 10,"No hay funcion en memoria $"
+    msgErrorTamanios db 10,"El limite inferior tiene que ser menor que el limite mayor $"
+
     ;############################################# FUNCIONES ##################################################################
     flagFuncion db 2 DUP(0)
     valor db 4 DUP("$")
     coeficiente1 db 2 DUP(0)
-    coeficiente2 dw 2 DUP(0)
-    coeficiente3 dw 2 DUP(0)
+    coeficiente2 db 2 DUP(0)
+    coeficiente3 db 2 DUP(0)
     coeficiente4 db 48,48,"$"
+    xInicial db 2 DUP(0)
+    xFinal db 2 DUP(0)
 .code
 
 inicio:
@@ -131,6 +140,63 @@ inicio:
         ;####################################################### GRAFICAR FUNCION ###########################################
         ;####################################################################################################################
         graficarFuncion:
+            clearScreen
+            ;cmp flagFuncion,0d
+            ;je noHayFuncion
+
+            mostrarCadena msgMenuGrafica
+            ingresarCaracter
+
+            cmp bl,'1'
+            je graficarOriginal
+
+            jmp salir
+
+
+            noHayFuncion:
+                mostrarCadena msgErrorFuncion
+                ingresarCaracter
+                jmp menu
+
+        ;####################################################### GRAFICAR ORIGINAL ###########################################
+        ;####################################################################################################################
+        graficarOriginal:
+            clearScreen
+            ; Limite Inferior
+            mostrarCadena msgValorInicial
+            ingresarCadena valor
+            verificarCoeficienteS xInicial 
+            cmp bx,1d
+            je errorLimite 
+
+            ;Limite Superior
+
+            mostrarCadena msgValorFinal
+            ingresarCadena valor
+            verificarCoeficienteS xFinal 
+            cmp bx,1d
+            je errorLimite 
+
+            compararLimites 
+            cmp bx,1d
+            je errorLimiteTamanio
+            
+            graphOriginal
+            jmp menu
+
+
+
+            errorLimite:
+                mostrarCadena msgErrorCoeficiente
+                ingresarCaracter
+                jmp menu
+            
+            errorLimiteTamanio:
+                mostrarCadena msgErrorTamanios
+                ingresarCaracter
+                jmp graficarOriginal
+
+            
 
         ;####################################################### REPORTE ###########################################
         ;####################################################################################################################
