@@ -140,7 +140,7 @@ endm
 verificarLimiteN macro limite
     LOCAL salir,fin
     lea SI, valor + 2
-
+    
     mov dl, [SI + bx]
     cmp dl,'0'
     jl salir
@@ -157,8 +157,9 @@ verificarLimiteN macro limite
     inc bx
 
     ;Unidad
-
+    xor dx,dx
     mov dl, [SI + bx]
+    
     cmp dl,'0'
     jl salir
     cmp dl,'9'
@@ -225,30 +226,167 @@ endm
 ;##############################################################################
 
 
-graphOriginal macro
-    LOCAL ciclo_1
+;##############################################################################
+;########################## GRAFICAR EJES ###################
+;##############################################################################
+graficarEjes macro
+    LOCAL ejeX,ejeY
     mov ax,13h
     int 10h
     mov cx,0000h
-  mov dx,0000h
+    mov dx,0000h
+    xor cx,cx
+    mov dx,100d
+    ejeX:
 
-  ciclo_1:
-  mov ah,0ch
-  mov al,cl
-  int 10h
-  inc dx
-  cmp dx,200
-  jne ciclo_1
+        mov ah,0ch
+        mov al,12
+        int 10h
+        
+        inc cx
+        cmp cx,320d
+        jle ejeX
 
-  mov dx,0000h
-  inc cx
-  cmp cx,256
-  jne ciclo_1
+    mov cx,160
+    xor dx,dx
 
-  ; esperar por tecla
-  mov ah,10h
-  int 16h
+    ejeY:
 
-   mov ax,3h
-  int 10h
+        mov ah,0ch
+        mov al,12
+        int 10h
+        
+        inc dx
+        cmp dx,200d
+        jle ejeY
+
+   
+endm
+
+
+graphOriginal macro
+    LOCAL ciclo,salir,negativo,salto,negativo2,salto2
+    graficarEjes
+    convertirNumero tempI,xInicial
+    convertirNumero tempF,xFinal
+    
+     mov bl,tempI
+     xor bh,bh 
+    ciclo: 
+       
+        xor bh,bh 
+        cmp bl,tempF 
+        jg salir
+        push bx
+        
+        mov ax,bx
+        negarNumero
+        xor ah,ah
+        mov cx,160d 
+        mul cx 
+        mov cx,99d
+        div cx 
+        xor ah,ah
+            
+        negarNumero
+        
+        add ax,160d 
+        mov cx,ax 
+
+        convertirNumero temp,coeficiente1
+        
+        pop bx 
+        push bx 
+        xor ax,ax
+        mov al,temp 
+        mul bx
+        
+        
+
+
+        
+
+        mov bx,ax 
+        mov ax, 100d 
+        sub ax,bx
+        mov dx,ax
+        
+        mov ah,0ch
+        mov al,9
+        int 10h
+
+
+            
+        pop bx
+        inc bx
+
+    jmp ciclo
+    salir:
+    ; esperar por tecla
+    mov ah,10h
+    int 16h
+
+    mov ax,3h
+    int 10h
+endm
+
+;##############################################################################
+;########################## CONVERTIR NUMERO ###################
+;##############################################################################
+convertirNumero macro numero,limite
+    LOCAL negativo,salto 
+    xor ax,ax
+    mov al,[limite + 1]
+    mov numero,al
+    cmp [limite + 0],1d 
+    je negativo 
+    jmp salto
+
+    negativo:   
+        mov numero,-1d
+        mul numero 
+        mov numero,al 
+    salto:
+endm
+
+;##############################################################################
+;########################## NEGAR NUMERO ###################
+;##############################################################################
+negarNumero macro
+    LOCAL negativo,salto
+    cmp bl,0d 
+    jl negativo 
+    jmp salto
+        
+        
+    negativo:
+        neg ax
+
+    salto:
+endm 
+;##############################################################################
+;########################## POTENCIA ###################
+;##############################################################################
+potencia macro cantidad,valor
+    LOCAL ciclo,fin 
+    xor cx,cx 
+    mov cl,cantidad
+    mov ax,1d
+    
+    cmp cx,0d
+    jg ciclo
+
+    mov ax,0d
+    jmp fin     
+    ciclo:
+        cmp cx,1d 
+        jl fin 
+        mul valor
+
+        dec cx
+
+        jmp ciclo 
+
+    fin:
+        
 endm

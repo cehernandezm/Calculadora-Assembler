@@ -41,35 +41,42 @@ endm
 .model small
 .stack
 .data
-    cabecera   db "Universidad de San Carlos de Guatemala",10,"Facultad de Ingenieria",10,"Ciencias y Sistemas",10,
-      "Arquitectura de computadores y ensambladores 1 A",10,"Primer Semestre 2020",10,"Carlos Eduardo Hernandez Molina",10,"201612118",10,"Quinta Practica",10,"$"
-    
-    msgMenu db 10,"1. Ingresar Funcion f(x)",10,"2. Funcion Memoria",10,"3. Derivada de F(x)",10,"4. Integral F(x)",10,"5. Graficar Funciones",10,"6. Reporte",10,"7. Reporte Calculadora",10,"8. Salir",10,"$"
+    ;######################################################### MENSAJES #############################################################
+        cabecera   db "Universidad de San Carlos de Guatemala",10,"Facultad de Ingenieria",10,"Ciencias y Sistemas",10,
+        "Arquitectura de computadores y ensambladores 1 A",10,"Primer Semestre 2020",10,"Carlos Eduardo Hernandez Molina",10,"201612118",10,"Quinta Practica",10,"$"
+        
+        msgMenu db 10,"1. Ingresar Funcion f(x)",10,"2. Funcion Memoria",10,"3. Derivada de F(x)",10,"4. Integral F(x)",10,"5. Graficar Funciones",10,"6. Reporte",10,"7. Reporte Calculadora",10,"8. Salir",10,"$"
 
-    msgMenuGrafica db 10,"1. Graficar Funcion Original",10,"2. Graficar Derivada",10,"3.Graficar Integral",10,"4. Regresar",10,"$"
+        msgMenuGrafica db 10,"1. Graficar Funcion Original",10,"2. Graficar Derivada",10,"3.Graficar Integral",10,"4. Regresar",10,"$"
 
-    msgDespedida db 10,"Adios :(",10,"$"
+        msgDespedida db 10,"Adios :(",10,"$"
 
-    msgCoeficiente4 db 10,"Coeficiente de x4: $"
-    msgCoeficiente3 db 10,"Coeficiente de x3: $"
-    msgCoeficiente2 db 10,"Coeficiente de x2: $"
-    msgCoeficiente1 db 10,"Coeficiente de x1: $"
+        msgCoeficiente4 db 10,"Coeficiente de x4: $"
+        msgCoeficiente3 db 10,"Coeficiente de x3: $"
+        msgCoeficiente2 db 10,"Coeficiente de x2: $"
+        msgCoeficiente1 db 10,"Coeficiente de x1: $"
 
-    msgValorInicial db 10,"Ingrese el valor Inicial: $"
-    msgValorFinal db 10,"Ingrese el valor Final: $"
-    msgErrorCoeficiente db 10,"Se ingreso un valor erroneo $"
-    msgErrorFuncion db 10,"No hay funcion en memoria $"
-    msgErrorTamanios db 10,"El limite inferior tiene que ser menor que el limite mayor $"
+        msgValorInicial db 10,"Ingrese el valor Inicial: $"
+        msgValorFinal db 10,"Ingrese el valor Final: $"
+        msgErrorCoeficiente db 10,"Se ingreso un valor erroneo $"
+        msgErrorFuncion db 10,"No hay funcion en memoria $"
+        msgErrorTamanios db 10,"El limite inferior tiene que ser menor que el limite mayor $"
 
     ;############################################# FUNCIONES ##################################################################
-    flagFuncion db 2 DUP(0)
-    valor db 4 DUP("$")
-    coeficiente1 db 2 DUP(0)
-    coeficiente2 db 2 DUP(0)
-    coeficiente3 db 2 DUP(0)
-    coeficiente4 db 48,48,"$"
-    xInicial db 2 DUP(0)
-    xFinal db 2 DUP(0)
+        flagFuncion db 2 DUP(0)
+        valor db 5 DUP("$")
+        coeficiente1 db 2 DUP(0)
+        coeficiente2 db 2 DUP(0)
+        coeficiente3 db 2 DUP(0)
+        coeficiente4 db 48,48,"$"
+        xInicial db 2 DUP(0)
+        xFinal db 2 DUP(0)
+
+    ;######################################### LIMITES ############################################################################
+        tempI db ?
+        tempF db ?
+        temp db ?
+        temp2 db ?
 .code
 
 inicio:
@@ -165,7 +172,7 @@ inicio:
             ; Limite Inferior
             mostrarCadena msgValorInicial
             ingresarCadena valor
-            verificarCoeficienteS xInicial 
+            verificarLimiteS xInicial 
             cmp bx,1d
             je errorLimite 
 
@@ -173,11 +180,11 @@ inicio:
 
             mostrarCadena msgValorFinal
             ingresarCadena valor
-            verificarCoeficienteS xFinal 
+            verificarLimiteS xFinal 
             cmp bx,1d
             je errorLimite 
 
-            compararLimites 
+            compararLimites
             cmp bx,1d
             je errorLimiteTamanio
             
@@ -189,7 +196,7 @@ inicio:
             errorLimite:
                 mostrarCadena msgErrorCoeficiente
                 ingresarCaracter
-                jmp menu
+                jmp graficarOriginal
             
             errorLimiteTamanio:
                 mostrarCadena msgErrorTamanios
