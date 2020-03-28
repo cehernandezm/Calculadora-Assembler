@@ -297,6 +297,12 @@ graphOriginal macro
         saltoX:
         mov temporalY,100d
         mov bl,temp2
+        analizarCoeficiente coeficiente4,4d
+        mov bl,temp2
+        analizarCoeficiente coeficiente3,3d
+        mov bl,temp2
+        analizarCoeficiente coeficiente2,2d
+        mov bl,temp2
         analizarCoeficiente coeficiente1,1d
         mov bl,temp2
        
@@ -339,7 +345,12 @@ analizarCoeficiente macro coeficiente,exponente
     mov bx,ax
 
     mov cx,exponente
+    
     cmp cx,0d
+    je saltoN
+    cmp cx,2d 
+    je saltoN 
+    cmp cx,4d 
     je saltoN
 
     cmp temp3,0d
