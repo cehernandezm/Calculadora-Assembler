@@ -45,7 +45,7 @@ endm
 verificarCoeficienteS macro coeficiente
     LOCAL positivo,salir,negativo
     lea SI, valor + 2
-
+    
     mov dl, [SI + 0]
     cmp dl,'+'
     je positivo
@@ -263,54 +263,52 @@ graficarEjes macro
    
 endm
 
-
+;##############################################################################
+;########################## GRAFICAR ORIGINAL ###################
+;##############################################################################
 graphOriginal macro
-    LOCAL ciclo,salir,negativo,salto,negativo2,salto2
+    LOCAL ciclo,salir,yNegativo,saltoY,xNegativo,saltoX
     graficarEjes
     convertirNumero tempI,xInicial
     convertirNumero tempF,xFinal
     
      mov bl,tempI
-     xor bh,bh 
     ciclo: 
        
-        xor bh,bh 
+        xor bh,bh
+        mov temp2,bl 
         cmp bl,tempF 
         jg salir
         push bx
         
-        mov ax,bx
-        negarNumero
-        xor ah,ah
-        mov cx,160d 
-        mul cx 
-        mov cx,99d
-        div cx 
-        xor ah,ah
-            
-        negarNumero
-        
-        add ax,160d 
-        mov cx,ax 
 
-        convertirNumero temp,coeficiente1
+        cmp bl,0d 
+        jl xNegativo
+        ejeXPositivo bl 
+        jmp saltoX
+
+        xNegativo:
+            ejeXNegativo bl
+        saltoX:
+
+        convertirNumero temp,coeficiente1 
         
-        pop bx 
-        push bx 
         xor ax,ax
-        mov al,temp 
-        mul bx
-        
-        
+        mov al,temp
+        xor bx,bx 
+        mov bl,temp2 
 
+        cmp temp,0d 
+        jl yNegativo 
+        jmp saltoY 
+        yNegativo:
 
-        
+        saltoY:
+            ejeYPositivo 
 
-        mov bx,ax 
-        mov ax, 100d 
-        sub ax,bx
-        mov dx,ax
-        
+         
+        pop dx
+        pop cx
         mov ah,0ch
         mov al,9
         int 10h
@@ -329,6 +327,81 @@ graphOriginal macro
     mov ax,3h
     int 10h
 endm
+
+
+;##############################################################################
+;########################## GRAFICAR EJE X + ###################
+;##############################################################################
+ejeXPositivo macro numero
+    xor ax,ax
+    mov al,numero  
+    xor ah,ah
+    mov cx,160d 
+    mul cx 
+    mov cx,99d
+    div cx 
+    xor ah,ah 
+    add ax,160d
+
+    mov cx,ax 
+    push cx
+
+endm
+
+;##############################################################################
+;########################## GRAFICAR EJE X - ###################
+;##############################################################################
+ejeXNegativo macro numero
+    xor ax,ax
+    mov al,numero
+    neg ax  
+    xor ah,ah
+    mov cx,160d 
+    mul cx 
+    mov cx,99d
+    div cx 
+    xor ah,ah
+    mov bx,ax
+    mov ax,160d 
+    sub ax,bx
+
+    mov cx,ax 
+    push cx
+
+endm
+
+;##############################################################################
+;########################## GRAFICAR EJE Y + ###################
+;##############################################################################
+ejeYPositivo macro
+    LOCAL negativo,salto
+    push bx
+    negarNumero 
+    xor bh,bh
+    mul bx
+    mov dx,ax
+    mov ax,100d
+    
+    pop bx 
+    cmp bl,0d 
+    jl negativo
+    
+    sub ax,dx 
+    
+    jmp salto
+    
+    negativo: 
+        add ax,dx
+    salto:
+    mov dx,ax 
+    push dx
+
+
+
+
+
+endm
+
 
 ;##############################################################################
 ;########################## CONVERTIR NUMERO ###################
@@ -360,7 +433,7 @@ negarNumero macro
         
         
     negativo:
-        neg ax
+        neg bx
 
     salto:
 endm 
