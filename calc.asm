@@ -64,6 +64,7 @@ endm
         msgCoeficiente3 db 10,"Coeficiente de x3: $"
         msgCoeficiente2 db 10,"Coeficiente de x2: $"
         msgCoeficiente1 db 10,"Coeficiente de x1: $"
+        msgCoeficiente0 db 10,"Coeficiente de x0: $"
 
         msgValorInicial db 10,"Ingrese el valor Inicial: $"
         msgValorFinal db 10,"Ingrese el valor Final: $"
@@ -74,6 +75,7 @@ endm
     ;############################################# FUNCIONES ##################################################################
         flagFuncion db 2 DUP(0)
         
+        coeficiente0 db 4 DUP(0)
         coeficiente1 db 4 DUP(0)
         coeficiente2 db 4 DUP(0)
         coeficiente3 db 4 DUP(0)
@@ -86,6 +88,8 @@ endm
         tempF db ?
         temp db ?
         temp2 db ?
+        temporalY dw ?
+        temp3 db ?
         valor db 5 DUP("$")
         valor2 db 5 DUP("$")
 .code
@@ -148,6 +152,12 @@ inicio:
             add dl,44d 
             mostrarCaracter dl 
             mov dl,[coeficiente1 + 1]
+            add dl,48d 
+            mostrarCaracter dl
+            mov dl,[coeficiente0 + 0]
+            add dl,44d 
+            mostrarCaracter dl 
+            mov dl,[coeficiente0 + 1]
             add dl,48d 
             mostrarCaracter dl
             ingresarCaracter

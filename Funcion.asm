@@ -31,6 +31,12 @@ almacenarCoeficientes macro
     cmp bx,1d
     je salir
     
+    ;############################ COEFICIENTE 0 ########################################
+    mostrarCadena msgCoeficiente0
+    ingresarCadena valor
+    verificarCoeficienteS coeficiente0
+    cmp bx,1d
+    je salir
 
     salir:
 
@@ -271,8 +277,7 @@ graphOriginal macro
     graficarEjes
     convertirNumero tempI,xInicial
     convertirNumero tempF,xFinal
-    ;mov tempI,-10d 
-    ;mov tempF,0d
+   
      mov bl,tempI
     ciclo: 
        
@@ -290,24 +295,13 @@ graphOriginal macro
         xNegativo:
             ejeXNegativo bl
         saltoX:
+        mov temporalY,100d
+        mov bl,temp2
+        analizarCoeficiente coeficiente1,1d
+        mov bl,temp2
+       
+        analizarCoeficiente coeficiente0,0d  
 
-        xor ax,ax
-        mov al,[coeficiente1 + 1]
-        xor bx,bx 
-        mov bl,temp2 
-
-        cmp [coeficiente1 + 0],1d 
-        je yNegativo 
-            ejeYPositivo 
-        jmp saltoY 
-        yNegativo:
-            ejeYNegativo
-
-        saltoY:
-            
-
-         
-        pop dx
         pop cx
         mov ah,0ch
         mov al,9
@@ -328,6 +322,53 @@ graphOriginal macro
     int 10h
 endm
 
+;##############################################################################
+;########################## Analizar Coeficiente ###################
+;##############################################################################
+analizarCoeficiente macro coeficiente,exponente
+    LOCAL yNegativo,saltoY,negar,saltoN
+    
+    xor ax,ax
+    mov temp3,bl
+    negarNumero 
+    
+    potencia exponente,bx
+    
+
+    xor bx,bx
+    mov bx,ax
+
+    mov cx,exponente
+    cmp cx,0d
+    je saltoN
+
+    cmp temp3,0d
+    jl negar 
+    jmp saltoN 
+    
+    negar: 
+        neg bx 
+    
+    saltoN:
+
+    xor ax,ax
+    mov al,[coeficiente + 1]
+
+
+
+    cmp [coeficiente + 0],1d 
+    je yNegativo 
+    ejeYPositivo 
+    jmp saltoY 
+    yNegativo:
+        ejeYNegativo
+
+    saltoY:
+    pop dx 
+    
+    mov temporalY,dx
+
+endm
 
 ;##############################################################################
 ;########################## GRAFICAR EJE X + ###################
@@ -380,7 +421,7 @@ ejeYPositivo macro
     xor bh,bh
     mul bx
     mov dx,ax
-    mov ax,100d
+    mov ax,temporalY
     
     pop bx 
     cmp bl,0d 
@@ -408,7 +449,7 @@ ejeYNegativo macro
     xor bh,bh
     mul bx
     mov dx,ax
-    mov ax,100d
+    mov ax,temporalY
     
     pop bx 
     cmp bl,0d 
@@ -471,10 +512,10 @@ potencia macro cantidad,valor
     mov cl,cantidad
     mov ax,1d
     
-    cmp cx,0d
+    cmp cl,0d
     jg ciclo
 
-    mov ax,0d
+    mov ax,1d
     jmp fin     
     ciclo:
         cmp cx,1d 
