@@ -11,6 +11,14 @@ mostrarCadena macro cadena
 endm
 
 ;##############################################################################
+;########################## MOSTRAR UNA CARACTER     ###################
+;##############################################################################
+mostrarCaracter macro caracter
+   mov ah,2
+   mov dl,caracter
+   int 21h
+endm
+;##############################################################################
 ;########################## PEDIR UN CARACTER      ###################
 ;##############################################################################
 ingresarCaracter macro 
@@ -32,8 +40,9 @@ endm
 ;##############################################################################
 ingresarCadena macro variable
     xor ax,ax
+    
     mov ah,0AH               
-    mov dx,offset variable                
+    lea dx,variable
     int 21h
 endm
 
@@ -64,10 +73,10 @@ endm
 
     ;############################################# FUNCIONES ##################################################################
         flagFuncion db 2 DUP(0)
-        valor db 5 DUP("$")
-        coeficiente1 db 2 DUP(0)
-        coeficiente2 db 2 DUP(0)
-        coeficiente3 db 2 DUP(0)
+        
+        coeficiente1 db 4 DUP(0)
+        coeficiente2 db 4 DUP(0)
+        coeficiente3 db 4 DUP(0)
         coeficiente4 db 48,48,"$"
         xInicial db 2 DUP(0)
         xFinal db 2 DUP(0)
@@ -77,6 +86,8 @@ endm
         tempF db ?
         temp db ?
         temp2 db ?
+        valor db 5 DUP("$")
+        valor2 db 5 DUP("$")
 .code
 
 inicio:
@@ -132,8 +143,15 @@ inicio:
         ;####################################################### FUNCION MEMORIA ###########################################
         ;####################################################################################################################
         funcionMemoria:
-
-
+            clearScreen
+            mov dl,[coeficiente1 + 0]
+            add dl,44d 
+            mostrarCaracter dl 
+            mov dl,[coeficiente1 + 1]
+            add dl,48d 
+            mostrarCaracter dl
+            ingresarCaracter
+            jmp menu
         ;####################################################### DERIVADA ###########################################
         ;####################################################################################################################
         derivada:
@@ -152,6 +170,7 @@ inicio:
             ;je noHayFuncion
 
             mostrarCadena msgMenuGrafica
+            
             ingresarCaracter
 
             cmp bl,'1'
@@ -171,6 +190,7 @@ inicio:
             clearScreen
             ; Limite Inferior
             mostrarCadena msgValorInicial
+             
             ingresarCadena valor
             verificarLimiteS xInicial 
             cmp bx,1d

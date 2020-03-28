@@ -271,11 +271,11 @@ graphOriginal macro
     graficarEjes
     convertirNumero tempI,xInicial
     convertirNumero tempF,xFinal
-    
+    ;mov tempI,-10d 
+    ;mov tempF,0d
      mov bl,tempI
     ciclo: 
        
-        xor bh,bh
         mov temp2,bl 
         cmp bl,tempF 
         jg salir
@@ -291,20 +291,20 @@ graphOriginal macro
             ejeXNegativo bl
         saltoX:
 
-        convertirNumero temp,coeficiente1 
-        
         xor ax,ax
-        mov al,temp
+        mov al,[coeficiente1 + 1]
         xor bx,bx 
         mov bl,temp2 
 
-        cmp temp,0d 
-        jl yNegativo 
+        cmp [coeficiente1 + 0],1d 
+        je yNegativo 
+            ejeYPositivo 
         jmp saltoY 
         yNegativo:
+            ejeYNegativo
 
         saltoY:
-            ejeYPositivo 
+            
 
          
         pop dx
@@ -354,7 +354,7 @@ endm
 ejeXNegativo macro numero
     xor ax,ax
     mov al,numero
-    neg ax  
+    neg al  
     xor ah,ah
     mov cx,160d 
     mul cx 
@@ -396,9 +396,33 @@ ejeYPositivo macro
     mov dx,ax 
     push dx
 
+endm
 
-
-
+;##############################################################################
+;########################## GRAFICAR EJE Y + ###################
+;##############################################################################
+ejeYNegativo macro
+    LOCAL negativo,salto
+    push bx
+    negarNumero 
+    xor bh,bh
+    mul bx
+    mov dx,ax
+    mov ax,100d
+    
+    pop bx 
+    cmp bl,0d 
+    jl negativo
+    
+    add ax,dx 
+    
+    jmp salto
+    
+    negativo: 
+        sub ax,dx
+    salto:
+    mov dx,ax 
+    push dx
 
 endm
 
@@ -410,15 +434,16 @@ convertirNumero macro numero,limite
     LOCAL negativo,salto 
     xor ax,ax
     mov al,[limite + 1]
-    mov numero,al
+    mov numero,al 
+    mov al,numero
     cmp [limite + 0],1d 
     je negativo 
     jmp salto
 
     negativo:   
-        mov numero,-1d
-        mul numero 
-        mov numero,al 
+        neg al
+        xor ah,ah
+        mov numero,al
     salto:
 endm
 
