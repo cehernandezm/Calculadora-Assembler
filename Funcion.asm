@@ -573,46 +573,51 @@ endm
 
 mostrarFuncionOTexto macro
     
-    mostrarSigno [coeficiente4 + 0]
-    mov dl,[coeficiente4 + 1]
-    add dl,48d 
-    mostrarCaracter dl 
-    mostrarCaracter 'X' 
-    mostrarCaracter '4'
+    mostrarCaracter 'f'
+    mostrarCaracter '('
+    mostrarCaracter 'x'
+    mostrarCaracter ')'
+    mostrarCaracter '=' 
+
     mostrarCaracter 32
-    
-    mostrarSigno [coeficiente3 + 0]
-    mov dl,[coeficiente3 + 1]
-    add dl,48d 
-    mostrarCaracter dl 
-    mostrarCaracter 'X' 
-    mostrarCaracter '3'
+    mostrarCaracter 32
     mostrarCaracter 32
 
-    mostrarSigno [coeficiente2 + 0]
-    mov dl,[coeficiente2 + 1]
-    add dl,48d 
-    mostrarCaracter dl 
-    mostrarCaracter 'X' 
-    mostrarCaracter '2'
-    mostrarCaracter 32
 
-    mostrarSigno [coeficiente1 + 0]
-    mov dl,[coeficiente1 + 1]
-    add dl,48d 
-    mostrarCaracter dl 
-    mostrarCaracter 'X' 
-    mostrarCaracter 32
-
-    mostrarSigno [coeficiente0 + 0]
-    mov dl,[coeficiente0 + 1]
-    add dl,48d 
-    mostrarCaracter dl 
-    mostrarCaracter 32
-
+    mostrarCoeficiente coeficiente4,'4'
+    mostrarCoeficiente coeficiente3,'3'
+    mostrarCoeficiente coeficiente2,'2'
+    mostrarCoeficiente coeficiente1,'1'
+    mostrarCoeficiente coeficiente0,'0'
    
 endm
 
+
+;##############################################################################
+;########################## MOSTRAR COEFICIENTE ###################
+;##############################################################################
+
+mostrarCoeficiente macro coeficiente,numero
+    LOCAL salto
+    mostrarSigno [coeficiente + 0] 
+    mov dl,[coeficiente + 1]
+    xor dh,dh 
+    mostrarNumero dl
+
+    mov dl,numero
+    cmp dl,48d 
+    je salto
+    mostrarCaracter 'X' 
+    mostrarCaracter numero
+    mostrarCaracter 32 
+    mostrarCaracter 32
+    salto:
+endm
+
+
+;##############################################################################
+;########################## MOSTRAR EL SIGNO + / - ###################
+;##############################################################################
 
 mostrarSigno macro signo
     LOCAL positivo,salto
@@ -625,3 +630,86 @@ mostrarSigno macro signo
     mostrarCaracter '+'
     salto:
 endm
+
+
+;##############################################################################
+;########################## CALCULAR DERIVADA ###################
+;##############################################################################
+calcularDerivada macro coeficiente,ncoeficiente,numero
+    xor ax,ax
+    xor bx,bx 
+    xor cx,cx
+    mov al,[coeficiente + 1]
+    mov bx,numero
+    mul bx 
+
+    mov cl,[coeficiente + 0]
+    mov [ncoeficiente + 0],cl 
+    mov [ncoeficiente + 1],al
+
+endm 
+
+;##############################################################################
+;########################## MOSTRAR EN PANTALLA LA DERIVADA ###################
+;##############################################################################
+mostrarDerivadaTexto macro 
+    calcularDerivada coeficiente4,coeficiente3D,4d
+    calcularDerivada coeficiente3,coeficiente2D,3d
+    calcularDerivada coeficiente2,coeficiente1D,2d
+    calcularDerivada coeficiente1,coeficiente0D,1d
+    
+    mostrarCaracter 'f'
+    mostrarCaracter 39d
+    mostrarCaracter '('
+    mostrarCaracter 'x'
+    mostrarCaracter ')'
+    mostrarCaracter '=' 
+
+    mostrarCaracter 32
+    mostrarCaracter 32
+    mostrarCaracter 32
+
+
+    mostrarCoeficiente coeficiente3D,'3'
+    mostrarCoeficiente coeficiente2D,'2'
+    mostrarCoeficiente coeficiente1D,'1'
+    mostrarCoeficiente coeficiente0D,'0'
+        
+endm 
+
+
+;##############################################################################
+;########################## MOSTRAR NUMEROS EN DECENA ###################
+;##############################################################################
+
+mostrarNumero macro numero
+    LOCAL unidad,salto
+    xor ax,ax
+    xor cx,cx
+    mov al,numero
+    cmp al,10d 
+    jl unidad
+    mov cl,10d 
+    div cl 
+
+    push ax 
+    mov cl,al 
+    add cl,48d 
+    mostrarCaracter cl 
+    pop ax 
+    mov cl,ah 
+    add cl,48d 
+    mostrarCaracter cl 
+
+    
+    
+    jmp salto
+    unidad:
+        mov bx,ax
+        add bx,48d 
+        mostrarCaracter 48d 
+        mostrarCaracter bl
+
+    salto:
+endm
+
