@@ -273,7 +273,7 @@ endm
 ;########################## GRAFICAR ORIGINAL ###################
 ;##############################################################################
 graphOriginal macro
-    LOCAL ciclo,salir,yNegativo,saltoY,xNegativo,saltoX
+    LOCAL ciclo,salir,yNegativo,saltoY,xNegativo,saltoX,coorN,saltoCoor
     graficarEjes
     convertirNumero tempI,xInicial
     convertirNumero tempF,xFinal
@@ -295,7 +295,7 @@ graphOriginal macro
         xNegativo:
             ejeXNegativo bl
         saltoX:
-        mov temporalY,100d
+        mov temporalY,0d
         mov bl,temp2
         analizarCoeficiente coeficiente4,4d
         mov bl,temp2
@@ -305,9 +305,23 @@ graphOriginal macro
         mov bl,temp2
         analizarCoeficiente coeficiente1,1d
         mov bl,temp2
-       
-        analizarCoeficiente coeficiente0,0d  
+        analizarCoeficiente coeficiente0,0d
+        
+        mov ax,temporalY
+        cmp temporalY,0d 
+        jl coorN 
+        
+        escalaY 0d
+        jmp saltoCoor
 
+
+        coorN:
+            neg ax 
+            escalaY 1d
+
+        saltoCoor:
+        
+        
         pop cx
         mov ah,0ch
         mov al,9
@@ -335,9 +349,8 @@ analizarCoeficiente macro coeficiente,exponente
     LOCAL yNegativo,saltoY,negar,saltoN
     
     xor ax,ax
-    mov temp3,bl
     negarNumero 
-    
+    xor bh,bh
     potencia exponente,bx
     
 
@@ -345,7 +358,8 @@ analizarCoeficiente macro coeficiente,exponente
     mov bx,ax
 
     mov cx,exponente
-    
+    mov temp3,0d
+
     cmp cx,0d
     je saltoN
     cmp cx,2d 
@@ -353,19 +367,17 @@ analizarCoeficiente macro coeficiente,exponente
     cmp cx,4d 
     je saltoN
 
-    cmp temp3,0d
+    cmp temp2,0
     jl negar 
     jmp saltoN 
     
     negar: 
-        neg bx 
+        mov temp3,1d
     
     saltoN:
 
     xor ax,ax
     mov al,[coeficiente + 1]
-
-
 
     cmp [coeficiente + 0],1d 
     je yNegativo 
@@ -375,10 +387,6 @@ analizarCoeficiente macro coeficiente,exponente
         ejeYNegativo
 
     saltoY:
-    pop dx 
-    
-    mov temporalY,dx
-
 endm
 
 ;##############################################################################
@@ -427,26 +435,21 @@ endm
 ;##############################################################################
 ejeYPositivo macro
     LOCAL negativo,salto
-    push bx
-    negarNumero 
-    xor bh,bh
     mul bx
-    mov dx,ax
-    mov ax,temporalY
     
-    pop bx 
-    cmp bl,0d 
-    jl negativo
     
-    sub ax,dx 
-    
+    cmp temp3,1d
+    je negativo
+        
+    add temporalY,ax
+
     jmp salto
     
     negativo: 
-        add ax,dx
+        sub temporalY,ax
+        
     salto:
-    mov dx,ax 
-    push dx
+    
 
 endm
 
@@ -455,35 +458,57 @@ endm
 ;##############################################################################
 ejeYNegativo macro
     LOCAL negativo,salto
-    push bx
-    negarNumero 
-    xor bh,bh
     mul bx
-    mov dx,ax
-    mov ax,temporalY
     
-    pop bx 
-    cmp bl,0d 
-    jl negativo
     
-    add ax,dx 
-    
+    cmp temp3,1d
+    je negativo
+        
+    sub temporalY,ax
+
     jmp salto
     
     negativo: 
-        sub ax,dx
+        add temporalY,ax
+        
     salto:
-    mov dx,ax 
-    push dx
+    
 
 endm
 
 
 ;##############################################################################
+;########################## ESCALA Y ###################
+;##############################################################################
+escalaY macro signo
+    LOCAL positivo,salto
+    xor dx,dx
+    mov cx,250d
+    div cx
+    xor ah,ah
+    
+    mov bx,signo
+    cmp bx,0d
+    je positivo
+    
+    mov dx,ax
+    add dx,100d
+    jmp salto 
+
+    positivo:
+        mov dx,100d
+        sub dx,ax
+    
+    salto:
+
+
+endm
+;##############################################################################
 ;########################## CONVERTIR NUMERO ###################
 ;##############################################################################
 convertirNumero macro numero,limite
-    LOCAL negativo,salto 
+    LOCAL negativo,salto
+     
     xor ax,ax
     mov al,[limite + 1]
     mov numero,al 
