@@ -278,7 +278,7 @@ graphOriginal macro
     convertirNumero tempI,xInicial
     convertirNumero tempF,xFinal
    
-     mov bl,tempI
+    mov bl,tempI
     ciclo: 
        
         mov temp2,bl 
@@ -539,6 +539,7 @@ negarNumero macro
 
     salto:
 endm 
+
 ;##############################################################################
 ;########################## POTENCIA ###################
 ;##############################################################################
@@ -564,4 +565,63 @@ potencia macro cantidad,valor
 
     fin:
         
+endm
+
+;##############################################################################
+;########################## MOSTRAR FUNCION ORIGINAL ###################
+;##############################################################################
+
+mostrarFuncionOTexto macro
+    
+    mostrarSigno [coeficiente4 + 0]
+    mov dl,[coeficiente4 + 1]
+    add dl,48d 
+    mostrarCaracter dl 
+    mostrarCaracter 'X' 
+    mostrarCaracter '4'
+    mostrarCaracter 32
+    
+    mostrarSigno [coeficiente3 + 0]
+    mov dl,[coeficiente3 + 1]
+    add dl,48d 
+    mostrarCaracter dl 
+    mostrarCaracter 'X' 
+    mostrarCaracter '3'
+    mostrarCaracter 32
+
+    mostrarSigno [coeficiente2 + 0]
+    mov dl,[coeficiente2 + 1]
+    add dl,48d 
+    mostrarCaracter dl 
+    mostrarCaracter 'X' 
+    mostrarCaracter '2'
+    mostrarCaracter 32
+
+    mostrarSigno [coeficiente1 + 0]
+    mov dl,[coeficiente1 + 1]
+    add dl,48d 
+    mostrarCaracter dl 
+    mostrarCaracter 'X' 
+    mostrarCaracter 32
+
+    mostrarSigno [coeficiente0 + 0]
+    mov dl,[coeficiente0 + 1]
+    add dl,48d 
+    mostrarCaracter dl 
+    mostrarCaracter 32
+
+   
+endm
+
+
+mostrarSigno macro signo
+    LOCAL positivo,salto
+    cmp signo,0d
+    je positivo 
+    mostrarCaracter '-' 
+    jmp salto
+
+    positivo:
+    mostrarCaracter '+'
+    salto:
 endm

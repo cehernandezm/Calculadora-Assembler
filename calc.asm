@@ -148,18 +148,7 @@ inicio:
         ;####################################################################################################################
         funcionMemoria:
             clearScreen
-            mov dl,[coeficiente1 + 0]
-            add dl,44d 
-            mostrarCaracter dl 
-            mov dl,[coeficiente1 + 1]
-            add dl,48d 
-            mostrarCaracter dl
-            mov dl,[coeficiente0 + 0]
-            add dl,44d 
-            mostrarCaracter dl 
-            mov dl,[coeficiente0 + 1]
-            add dl,48d 
-            mostrarCaracter dl
+            mostrarFuncionOTexto
             ingresarCaracter
             jmp menu
         ;####################################################### DERIVADA ###########################################
