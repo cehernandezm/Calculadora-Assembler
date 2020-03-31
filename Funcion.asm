@@ -822,7 +822,7 @@ escalaY macro signo
     je positivo
     
     mov dx,ax
-    add dx,100d
+    add dx,100d 
 
     jmp salto 
 
@@ -848,7 +848,7 @@ endm
 ;##############################################################################
 convertirNumero macro numero,limite
     LOCAL negativo,salto
-     
+    
     xor ax,ax
     mov al,[limite + 1]
     mov numero,al 
@@ -1053,3 +1053,71 @@ mostrarNumero macro numero
     salto:
 endm
 
+;##############################################################################
+;########################## CALCULAR INTEGRAL ###################
+;##############################################################################
+calcularIntegral macro coeficiente,ncoeficiente,numero
+    xor ax,ax 
+    xor cx,cx 
+    mov cl,[coeficiente + 0]
+    mov [ncoeficiente + 0],cl
+    mov cl,[coeficiente + 1] 
+    mov [ncoeficiente + 1],cl 
+    mov [ncoeficiente + 2],numero
+endm
+
+;##############################################################################
+;########################## MOSTRAR EN PANTALLA LA INTEGRAL ###################
+;##############################################################################
+mostrarIntegralTexto macro
+    calcularIntegral coeficiente4,coeficiente5I,5d
+    calcularIntegral coeficiente3,coeficiente4I,4d
+    calcularIntegral coeficiente2,coeficiente3I,3d
+    calcularIntegral coeficiente1,coeficiente2I,2d
+    calcularIntegral coeficiente0,coeficiente1I,1d
+
+
+    mostrarCaracter 'F'
+    mostrarCaracter '('
+    mostrarCaracter 'x'
+    mostrarCaracter ')'
+    mostrarCaracter '=' 
+
+    mostrarCaracter 32
+    mostrarCaracter 32
+    mostrarCaracter 32
+
+    mostrarCoeficienteIntegral coeficiente5I,'5'
+    mostrarCoeficienteIntegral coeficiente4I,'4'
+    mostrarCoeficienteIntegral coeficiente3I,'3'
+    mostrarCoeficienteIntegral coeficiente2I,'2'
+    mostrarCoeficienteIntegral coeficiente1I,'1'
+endm
+
+;##############################################################################
+;########################## MOSTRAR COEFICIENTE DE UNA INTEGRAL ###################
+;##############################################################################
+
+mostrarCoeficienteIntegral macro coeficiente,numero
+    LOCAL salto
+    mostrarSigno [coeficiente + 0] 
+    
+    mov dl,[coeficiente + 1]
+    xor dh,dh 
+    mostrarNumero dl
+
+
+    mostrarCaracter '/'
+    mov dl,[coeficiente + 2]
+    xor dh,dh 
+    mostrarNumero dl
+
+    mov dl,numero
+    cmp dl,48d 
+    je salto
+    mostrarCaracter 'X' 
+    mostrarCaracter numero
+    mostrarCaracter 32 
+    mostrarCaracter 32
+    salto: 
+endm

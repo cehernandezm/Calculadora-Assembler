@@ -79,7 +79,7 @@ endm
         coeficiente1 db 4 DUP(0)
         coeficiente2 db 4 DUP(0)
         coeficiente3 db 4 DUP(0)
-        coeficiente4 db 48,48,"$"
+        coeficiente4 db 4 DUP(0)
         xInicial db 2 DUP(0)
         xFinal db 2 DUP(0)
         escala dw ?
@@ -95,6 +95,13 @@ endm
         coeficiente1D db 4 DUP(0)
         coeficiente2D db 4 DUP(0)
         coeficiente3D db 4 DUP(0)
+    ;############################################# INTEGRAL ##################################################################
+        coeficiente0I db 4 DUP(0)
+        coeficiente1I db 4 DUP(0)
+        coeficiente2I db 4 DUP(0)
+        coeficiente3I db 4 DUP(0)
+        coeficiente4I db 4 DUP(0)
+        coeficiente5I db 4 DUP(0)
     ;######################################### LIMITES ############################################################################
         tempI db ?
         tempF db ?
@@ -178,7 +185,13 @@ inicio:
         ;####################################################### INTEGRAL ###########################################
         ;####################################################################################################################
         integral:
-
+            clearScreen
+            mostrarCaracter 10
+            mostrarCaracter 10
+            mostrarCaracter 10
+            mostrarIntegralTexto
+            ingresarCaracter 
+            jmp menu    
 
         ;####################################################### GRAFICAR FUNCION ###########################################
         ;####################################################################################################################
