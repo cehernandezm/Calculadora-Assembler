@@ -85,7 +85,11 @@ endm
         escala dw ?
         limiteSuperior dw ?
         limiteSuperiorN dw ?
-        lastValor dw ? 
+        lastValor dw ?
+        lastValorX dw ?
+        firstValor dw ? 
+        firstValorX dw ?
+        terminarTemp db ? 
     ;############################################# DERIVADA ##################################################################
         coeficiente0D db 4 DUP(0)
         coeficiente1D db 4 DUP(0)
@@ -189,8 +193,9 @@ inicio:
 
             cmp bl,'1'
             je graficarOriginal
-
-            jmp salir
+            cmp bl,'2'
+            je graficarDerivada
+            jmp menu
 
 
             noHayFuncion:
@@ -239,6 +244,46 @@ inicio:
                 jmp graficarOriginal
 
             
+        ;####################################################### GRAFICAR DERIVADA ###########################################
+        ;####################################################################################################################
+        graficarDerivada:
+            clearScreen
+            ; Limite Inferior
+            mostrarCadena msgValorInicial
+             
+            ingresarCadena valor
+            verificarLimiteS xInicial 
+            cmp bx,1d
+            je errorLimite2 
+
+            ;Limite Superior
+
+            mostrarCadena msgValorFinal
+            ingresarCadena valor
+            verificarLimiteS xFinal 
+            cmp bx,1d
+            je errorLimite2 
+
+            compararLimites
+            cmp bx,1d
+            je errorLimiteTamanio2
+            
+            controlEscalaDerivada
+            graphDerivada
+            jmp menu
+
+
+
+            errorLimite2:
+                mostrarCadena msgErrorCoeficiente
+                ingresarCaracter
+                jmp graficarDerivada
+            
+            errorLimiteTamanio2:
+                mostrarCadena msgErrorTamanios
+                ingresarCaracter
+                jmp graficarDerivada
+
 
         ;####################################################### REPORTE ###########################################
         ;####################################################################################################################
