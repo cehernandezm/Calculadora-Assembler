@@ -46,6 +46,43 @@ endm
 
 
 ;##############################################################################
+;########################## CONTROLAR ESCALAS  ORIGINAL   ###################
+;##############################################################################
+controlEscalaOriginal macro
+    LOCAL escala4,salto,escala3,escala2
+    
+    cmp [coeficiente4 + 1],0d 
+    jg escala4
+    cmp [coeficiente3 + 1],0d 
+    jg escala3
+    cmp [coeficiente2 + 1],0d 
+    jg escala2
+    mov escala,1d
+    mov limiteSuperior,900d
+    mov limiteSuperiorN,-900d
+    jmp salto
+    escala4:
+        mov escala,300d
+        mov limiteSuperior,13000d
+        mov limiteSuperiorN,-13000d
+        jmp salto
+
+    escala3:
+        mov escala,90d
+        mov limiteSuperior,5000d
+        mov limiteSuperiorN,-6000d
+        jmp salto
+    
+    escala2:
+        mov escala,20d
+        mov limiteSuperior,2025d
+        mov limiteSuperiorN,-2025d
+        jmp salto
+    salto:
+    
+    
+endm
+;##############################################################################
 ;########################## VERIFICAR LOS COEFICIENTES INGRESADOS(SIGNO)     ###################
 ;##############################################################################
 verificarCoeficienteS macro coeficiente
@@ -273,7 +310,7 @@ endm
 ;########################## GRAFICAR ORIGINAL ###################
 ;##############################################################################
 graphOriginal macro
-    LOCAL ciclo,salir,yNegativo,saltoY,xNegativo,saltoX,coorN,saltoCoor
+    LOCAL ciclo,salir,yNegativo,saltoY,xNegativo,saltoX,coorN,saltoCoor,salto,cero
     graficarEjes
     convertirNumero tempI,xInicial
     convertirNumero tempF,xFinal
@@ -296,6 +333,7 @@ graphOriginal macro
             ejeXNegativo bl
         saltoX:
         mov temporalY,0d
+        
         mov bl,temp2
         analizarCoeficiente coeficiente4,4d
         mov bl,temp2
@@ -307,27 +345,46 @@ graphOriginal macro
         mov bl,temp2
         analizarCoeficiente coeficiente0,0d
         
+        mov bx,limiteSuperior
+
+        cmp temporalY,bx 
+        jge cero
+        
+        mov bx,limiteSuperiorN
+        cmp temporalY,bx
+        jle cero
+
         mov ax,temporalY
-        cmp temporalY,0d 
+        
+        cmp al,0d 
         jl coorN 
         
         escalaY 0d
+        pop cx
+        
+        cmp dl,0d 
+        jle salto
+        
         jmp saltoCoor
-
 
         coorN:
             neg ax 
             escalaY 1d
-
+            pop cx 
+            cmp dx,200d 
+            jge salto
+        
         saltoCoor:
+            mov lastValor,dx
+            mov ah,0ch
+            mov al,9
+            int 10h
+            jmp salto
         
-        
-        pop cx
-        mov ah,0ch
-        mov al,9
-        int 10h
-
-
+        cero: 
+            pop cx
+        salto:
+            
             
         pop bx
         inc bx
@@ -346,14 +403,24 @@ endm
 ;########################## Analizar Coeficiente ###################
 ;##############################################################################
 analizarCoeficiente macro coeficiente,exponente
-    LOCAL yNegativo,saltoY,negar,saltoN
+    LOCAL yNegativo,saltoY,negar,saltoN,salto
     
     xor ax,ax
     negarNumero 
     xor bh,bh
+    xor dx,dx
     potencia exponente,bx
     
-
+    cmp dx,0d 
+    je salto 
+    
+    add lastValor,1d 
+    mov dx,lastValor
+    
+    jmp saltoY
+    
+    
+    salto:
     xor bx,bx
     mov bx,ax
 
@@ -387,6 +454,8 @@ analizarCoeficiente macro coeficiente,exponente
         ejeYNegativo
 
     saltoY:
+
+    
 endm
 
 ;##############################################################################
@@ -437,15 +506,17 @@ ejeYPositivo macro
     LOCAL negativo,salto
     mul bx
     
+    cmp dx,0d 
+    jne salto 
     
     cmp temp3,1d
     je negativo
-        
+   
     add temporalY,ax
-
     jmp salto
     
-    negativo: 
+    negativo:
+        
         sub temporalY,ax
         
     salto:
@@ -460,10 +531,13 @@ ejeYNegativo macro
     LOCAL negativo,salto
     mul bx
     
-    
+    cmp dx,0d 
+    jne salto 
+
     cmp temp3,1d
     je negativo
-        
+
+
     sub temporalY,ax
 
     jmp salto
@@ -481,26 +555,40 @@ endm
 ;########################## ESCALA Y ###################
 ;##############################################################################
 escalaY macro signo
-    LOCAL positivo,salto
+    LOCAL positivo,salto,error
+    
     xor dx,dx
-    mov cx,250d
+    mov cx,escala
     div cx
     xor ah,ah
-    
+
     mov bx,signo
     cmp bx,0d
     je positivo
     
     mov dx,ax
     add dx,100d
+
     jmp salto 
 
-    positivo:
+    positivo:    
+        
         mov dx,100d
         sub dx,ax
-    
-    salto:
+        
+        
 
+        jmp salto
+    
+    error:
+        xor dx,dx
+    
+    salto:    
+    
+    
+
+
+    
 
 endm
 ;##############################################################################

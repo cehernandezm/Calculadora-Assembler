@@ -82,6 +82,10 @@ endm
         coeficiente4 db 48,48,"$"
         xInicial db 2 DUP(0)
         xFinal db 2 DUP(0)
+        escala dw ?
+        limiteSuperior dw ?
+        limiteSuperiorN dw ?
+        lastValor dw ? 
     ;############################################# DERIVADA ##################################################################
         coeficiente0D db 4 DUP(0)
         coeficiente1D db 4 DUP(0)
@@ -218,6 +222,7 @@ inicio:
             cmp bx,1d
             je errorLimiteTamanio
             
+            controlEscalaOriginal
             graphOriginal
             jmp menu
 
