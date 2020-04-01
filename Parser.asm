@@ -31,6 +31,9 @@ corregirDireccion macro
     mostrarCaracter cl
     leerArchivo
     analisisLexico
+    cmp bx,1d 
+    je error 
+    analisisSintactico
     jmp fin
 
     error: 
@@ -93,4 +96,70 @@ analisisLexico macro
 
 endm 
 
+
+;##############################################################################
+;#################### ANALISIS SINTACTICO DE LOS CARACTERES ###########
+analisisSintactico macro
+    LOCAL salto,recursividad,error,espacio,signo,seguir
+    xor bx,bx
+    xor dx,dx
+    xor ax,ax
+    recursividad:
+        cmp bx,fileSize
+        jge salto 
+
+        mov cl,[buffer + bx]
+        cmp cl,'-'
+        je signo 
+        cmp cl,'+'
+        je signo 
+        cmp cl,'/'
+        je signo 
+        cmp cl,'*'
+        je signo
+
+        cmp cl,59d 
+        je espacio 
+        cmp cl,10d
+        je espacio 
+        cmp cl,32d 
+        je espacio
+
+        cmp ax,2d
+        jge error
+
+        inc ax
+        mov dx,0d
+
+        jmp seguir
+
+        signo:
+            cmp dx,1d 
+            je error
+            cmp ax,0d
+            je error 
+            mov dx,1d
+            mov ax,0d
+            
+        espacio:
+            cmp ax,1d 
+            je error
+           
+
+        seguir:
+        inc bx
+        jmp recursividad 
+    
+    error:
+        
+        mostrarCadena msgErrorSintactico
+        mostrarCaracter cl
+        mov bx,1d
+        jmp fin 
+    
+    salto:
+        mov bx,0d
+
+    fin: 
+endm
 
