@@ -77,9 +77,10 @@ controlEscalaOriginal macro
         jmp salto
     
     escala2:
-        mov escala,20d
-        mov limiteSuperior,2025d
-        mov limiteSuperiorN,-2025d
+        
+        mov escala,1d
+        mov limiteSuperior,2500d
+        mov limiteSuperiorN,-2500d
         mov terminarTemp,0d
         jmp salto
     salto:
@@ -121,6 +122,53 @@ controlEscalaDerivada macro
     
     
 endm
+
+
+;##############################################################################
+;########################## CONTROLAR ESCALAS  INTEGRAL    ###################
+;##############################################################################
+controlEscalaIntegral macro
+    LOCAL escala4,salto,escala3,escala2
+    
+    cmp [coeficiente5I + 1],0d 
+    jne escala4
+    cmp [coeficiente4I + 1],0d 
+    jne escala4
+    cmp [coeficiente3I + 1],0d 
+    jne escala3
+    cmp [coeficiente2I + 1],0d 
+    jne escala2
+    mov escala,1d
+    mov limiteSuperior,900d
+    mov limiteSuperiorN,-900d
+    mov terminarTemp,0d
+    jmp salto
+    escala4:
+        mov escala,15d
+        mov limiteSuperior,1200d
+        mov limiteSuperiorN,-1200d
+        mov terminarTemp,2d
+        jmp salto
+
+    escala3:
+        mov escala,20d
+        mov limiteSuperior,1000d
+        mov limiteSuperiorN,-1000d
+        mov terminarTemp,1d
+        jmp salto
+    
+    escala2:
+        mov escala,20d
+        mov limiteSuperior,2025d
+        mov limiteSuperiorN,-2025d
+        mov terminarTemp,0d
+        jmp salto
+    salto:
+    
+    
+endm
+
+
 ;##############################################################################
 ;########################## VERIFICAR LOS COEFICIENTES INGRESADOS(SIGNO)     ###################
 ;##############################################################################
@@ -390,12 +438,12 @@ graphOriginal macro
 
         mov bl,temp2
         analizarCoeficiente coeficiente1,1d
-        cmp dx,-1d 
-        je cero 
+       
 
         mov bl,temp2
         analizarCoeficiente coeficiente0,0d
         
+
         mov bx,limiteSuperior
 
         cmp temporalY,bx 
@@ -581,7 +629,9 @@ graphDerivada macro
 
         mov bl,temp2
         analizarCoeficiente coeficiente0D,0d
-        
+        cmp dx,-1d 
+        je cero
+
         mov bx,limiteSuperior
 
         cmp temporalY,bx 
@@ -648,6 +698,132 @@ graphDerivada macro
     int 10h
 endm
 
+
+
+;##############################################################################
+;########################## GRAFICAR INTEGRAL ###################
+;##############################################################################
+graphIntegral macro
+    LOCAL ciclo,salir,yNegativo,saltoY,xNegativo,saltoX,coorN,saltoCoor,salto,cero,saltoPrimero
+    graficarEjes
+    convertirNumero tempI,xInicial
+    convertirNumero tempF,xFinal
+    mov firstValorX,0d
+    mov lastValorX,0d
+    mov bl,tempI
+    ciclo: 
+       
+        mov temp2,bl 
+        cmp bl,tempF 
+        jg salir
+        push bx
+        
+
+        cmp bl,0d 
+        jl xNegativo
+        ejeXPositivo bl 
+        jmp saltoX
+
+        xNegativo:
+            ejeXNegativo bl
+        saltoX:
+        mov temporalY,0d
+        
+        mov bl,temp2
+        analizarCoeficienteIntegral coeficiente5I,5d
+        cmp dx,-1d 
+        je cero 
+
+        mov bl,temp2
+        analizarCoeficienteIntegral coeficiente4I,4d
+        cmp dx,-1d 
+        je cero 
+
+        mov bl,temp2
+        analizarCoeficienteIntegral coeficiente3I,3d
+        cmp dx,-1d 
+        je cero  
+
+        mov bl,temp2
+        analizarCoeficienteIntegral coeficiente2I,2d
+        cmp dx,-1d 
+        je cero 
+
+        mov bl,temp2
+        analizarCoeficienteIntegral coeficiente1I,1d
+        cmp dx,-1d 
+        je cero 
+
+        mov bl,temp2
+        analizarCoeficiente coeficiente0I,0d
+        cmp dx,-1d 
+        je cero
+
+        mov bx,limiteSuperior
+
+        cmp temporalY,bx 
+        jge cero
+        
+        mov bx,limiteSuperiorN
+        cmp temporalY,bx
+        jle cero
+
+        mov ax,temporalY
+        
+        cmp al,0d 
+        jl coorN 
+        
+        escalaY 0d
+        pop cx
+        
+        cmp dl,0d 
+        jle salto
+        
+        jmp saltoCoor
+
+        coorN:
+            neg ax 
+            escalaY 1d
+            pop cx 
+            cmp dx,200d 
+            jge salto
+        
+        saltoCoor:
+            mov lastValor,dx
+            mov lastValorX,cx
+            cmp firstValorX,0d 
+            jne saltoPrimero
+            mov firstValorX,cx 
+            mov firstValor,dx
+            saltoPrimero:
+            mov ah,0ch
+            mov al,9
+            int 10h
+            jmp salto
+        
+        cero: 
+            pop cx 
+        salto:
+            
+            
+        pop bx
+        inc bx
+
+    jmp ciclo
+    salir:
+    
+    terminarGrafica firstValorX,firstValor
+    terminarGrafica lastValorX,lastValor
+
+    
+    
+    ; esperar por tecla
+    mov ah,10h
+    int 16h
+
+    mov ax,3h
+    int 10h
+endm
 ;##############################################################################
 ;########################## Analizar Coeficiente ###################
 ;##############################################################################
@@ -705,6 +881,74 @@ analizarCoeficiente macro coeficiente,exponente
 
     
 endm
+
+;##############################################################################
+;########################## Analizar Coeficiente Integral ###################
+;##############################################################################
+analizarCoeficienteIntegral macro coeficiente,exponente
+    LOCAL yNegativo,saltoY,negar,saltoN,salto
+    
+    xor ax,ax
+    negarNumero 
+    xor bh,bh
+    xor dx,dx
+    potencia exponente,bx
+    
+    cmp dx,0d 
+    je salto 
+    
+    mov dx,-1d
+    
+    jmp saltoY
+    
+    
+    salto:
+    xor bx,bx
+    mov bx,ax
+
+    mov cx,exponente
+    mov temp3,0d
+
+    cmp cx,0d
+    je saltoN
+    cmp cx,2d 
+    je saltoN 
+    cmp cx,4d 
+    je saltoN
+
+    cmp temp2,0
+    jl negar 
+    jmp saltoN 
+    
+    negar: 
+        mov temp3,1d
+    
+    saltoN:
+
+    xor ax,ax
+    xor cx,cx
+    mov al,[coeficiente + 1]
+    mov cl,[coeficiente + 2]
+    div cl 
+    xor ah,ah
+
+
+
+
+    cmp [coeficiente + 0],1d 
+    je yNegativo 
+    ejeYPositivo 
+    jmp saltoY 
+    yNegativo:
+        ejeYNegativo
+
+    saltoY:
+
+    
+endm
+
+
+
 
 ;##############################################################################
 ;########################## GRAFICAR EJE X + ###################

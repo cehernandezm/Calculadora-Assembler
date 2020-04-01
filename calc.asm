@@ -66,6 +66,8 @@ endm
         msgCoeficiente1 db 10,"Coeficiente de x1: $"
         msgCoeficiente0 db 10,"Coeficiente de x0: $"
 
+        msgConstante db 10,"Ingrese el valor de C: $"
+
         msgValorInicial db 10,"Ingrese el valor Inicial: $"
         msgValorFinal db 10,"Ingrese el valor Final: $"
         msgErrorCoeficiente db 10,"Se ingreso un valor erroneo $"
@@ -208,7 +210,9 @@ inicio:
             je graficarOriginal
             cmp bl,'2'
             je graficarDerivada
-            jmp menu
+            cmp bl,'3' 
+            je graficarIntegral 
+            jmp graficarFuncion
 
 
             noHayFuncion:
@@ -298,6 +302,51 @@ inicio:
                 jmp graficarDerivada
 
 
+        ;####################################################### GRAFICAR INTEGRAL ###########################################
+        ;####################################################################################################################
+        graficarIntegral:
+            clearScreen
+            ; Limite Inferior
+            mostrarCadena msgValorInicial
+             
+            ingresarCadena valor
+            verificarLimiteS xInicial 
+            cmp bx,1d
+            je errorLimite3 
+
+            ;Limite Superior
+
+            mostrarCadena msgValorFinal
+            ingresarCadena valor
+            verificarLimiteS xFinal 
+            cmp bx,1d
+            je errorLimite3 
+
+            compararLimites
+            cmp bx,1d
+            je errorLimiteTamanio3
+            
+            mostrarCadena msgConstante 
+            ingresarCadena valor 
+            verificarLimiteS coeficiente0I
+            cmp bx,1d
+            je errorLimite3
+
+            controlEscalaIntegral
+            graphIntegral
+            jmp menu
+
+
+
+            errorLimite3:
+                mostrarCadena msgErrorCoeficiente
+                ingresarCaracter
+                jmp graficarDerivada
+            
+            errorLimiteTamanio3:
+                mostrarCadena msgErrorTamanios
+                ingresarCaracter
+                jmp graficarDerivada
         ;####################################################### REPORTE ###########################################
         ;####################################################################################################################
         reporte:
