@@ -117,10 +117,41 @@ endm
     ;######################################### ARCHIVOS ############################################################################
 
         subReporte db "C:\p5\reporte2.txt",0
+        reporteG db "C:\p5\reporte.txt",0
         stringfx db "f(x) = "
         stringfpx db "f'(x) = "
+        stringFXX db "F(x) = "
         filehandle dw ?
         stringCa db 2 DUP(0),"$"
+        
+        msgReporte db "Reporte Creado...$"
+        funcionOS db "Funcion Original:",10 
+        funcionDS db "Funcion Derivada:",10 
+        funcionIS db "Funcion Integral:",10
+        FechaS db "Fecha: "
+        HoraSS db "Hora: " 
+        encabezadoF db "UNIVERSIDAD DE SAN CARLOS DE GUATEMALA",10,
+        "FACULTAD DE INGENIERIA",10,"ESCUELA DE CIENCIAS Y SISTEMAS",10,
+        "ARQUITECTURA DE COMPUTADORES Y ENSAMBLADORES 1 A",10,
+        "PRIMER SEMESTRE 2020",10,
+        "CARLOS EDUARDO HERNANDEZ MOLINA",10,"201612118",10,"REPORTE PRACTICA 3",10,10,10
+
+
+        day db 2 DUP(0),"$"
+        day2 db 2 DUP(0),"$"
+
+        month db 2 DUP(0),"$"
+
+        year dw 8 DUP(0),"$"
+        year1 db 2 DUP(0),"$"
+        year2 db 2 DUP(0),"$"
+        year3 db 2 DUP(0),"$"
+        year4 db 2 DUP(0),"$"
+        diagonal db "/$"
+
+        horas DB ?, '$'
+        minutos DB ?,'$'
+        segundos DB ?,'$'
 .code
 
 inicio:
@@ -177,7 +208,10 @@ inicio:
         ;####################################################################################################################
         funcionMemoria:
             clearScreen
+            cmp flagFuncion,0d
+            je noHayFuncion
             mostrarFuncionOTexto
+            reporteOriginal
             ingresarCaracter
             jmp menu
         ;####################################################### DERIVADA ###########################################
@@ -185,10 +219,13 @@ inicio:
         derivada:
             
             clearScreen
+            cmp flagFuncion,0d
+            je noHayFuncion
             mostrarCaracter 10
             mostrarCaracter 10
             mostrarCaracter 10
             mostrarDerivadaTexto
+            reporteDerivada
             ingresarCaracter 
             jmp menu    
 
@@ -196,10 +233,13 @@ inicio:
         ;####################################################################################################################
         integral:
             clearScreen
+            cmp flagFuncion,0d
+            je noHayFuncion
             mostrarCaracter 10
             mostrarCaracter 10
             mostrarCaracter 10
             mostrarIntegralTexto
+            reporteIntegral
             ingresarCaracter 
             jmp menu    
 
@@ -296,7 +336,6 @@ inicio:
             
             controlEscalaDerivada
             graphDerivada
-            reporteDerivada
             jmp menu
 
 
@@ -351,16 +390,22 @@ inicio:
             errorLimite3:
                 mostrarCadena msgErrorCoeficiente
                 ingresarCaracter
-                jmp graficarDerivada
+                jmp graficarIntegral
             
             errorLimiteTamanio3:
                 mostrarCadena msgErrorTamanios
                 ingresarCaracter
-                jmp graficarDerivada
+                jmp graficarIntegral
         ;####################################################### REPORTE ###########################################
         ;####################################################################################################################
         reporte:
-
+            clearScreen
+            crearArchivo reporteG
+            crearReporteG
+            cerrarArchivo
+            mostrarCadena msgReporte
+            ingresarCaracter
+        jmp menu
 
         ;####################################################### MODO CALCULADORA###########################################
         ;####################################################################################################################
