@@ -1055,7 +1055,7 @@ endm
 ;##############################################################################
 escalaY macro signo
     LOCAL positivo,salto,error
-    
+    xor cx,cx
     xor dx,dx
     mov cx,escala
     div cx
