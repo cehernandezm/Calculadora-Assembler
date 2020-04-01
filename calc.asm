@@ -1,6 +1,7 @@
 
 include Funcion.asm
 include Files.asm
+include Parser.asm
 ;##############################################################################
 ;########################## MOSTRAR UNA CADENA     ###################
 ;##############################################################################
@@ -136,7 +137,8 @@ endm
         "PRIMER SEMESTRE 2020",10,
         "CARLOS EDUARDO HERNANDEZ MOLINA",10,"201612118",10,"REPORTE PRACTICA 3",10,10,10
 
-
+        buffer db 4000 dup (?), '$'
+        fileSize dw 0
         day db 2 DUP(0),"$"
         day2 db 2 DUP(0),"$"
 
@@ -152,6 +154,12 @@ endm
         horas DB ?, '$'
         minutos DB ?,'$'
         segundos DB ?,'$'
+    ;##################################################### ANALIZADOR ########################
+        msgArchivo db "Ingrese el nombre del archivo: $"
+        msgOpenError db 10,"No se pudo Abrir el archivo",10,"$"
+        msgErrorLexico db 10,"No se reconoce el Caracter: $"
+        direccion db "####C:\p5\prueba.txt##$"
+        fileAdress db 50 DUP(0)
 .code
 
 inicio:
@@ -410,7 +418,12 @@ inicio:
         ;####################################################### MODO CALCULADORA###########################################
         ;####################################################################################################################
         modoCalculadora:
-
+            clearScreen
+            ;mostrarCadena msgArchivo 
+            ;ingresarCadena direccion
+            corregirDireccion
+    
+    
     salir:
     mostrarCadena msgDespedida
     mov   ax,4c00h       

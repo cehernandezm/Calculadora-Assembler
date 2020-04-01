@@ -10,6 +10,48 @@ crearArchivo macro nombre
 endm
 
 ;##############################################################################
+;########################## ABRIR UN ARCHIVO  ###################
+;##############################################################################
+
+abrirArchivo macro nombre
+    LOCAL openError,salida
+    mov ah,3Dh
+    xor al,al
+    lea dx,[fileAdress] 
+    int 21h
+    jc openError
+      
+    mov filehandle,ax 
+    mov bx,1d 
+    jmp salida 
+
+    openError:
+        mostrarCadena msgOpenError 
+        mov bx,0d
+
+    salida:
+
+endm
+
+;##############################################################################
+;########################## LEER UN ARCHIVO  ###################
+;##############################################################################
+leerArchivo  macro
+    
+    mov ah,3fh
+    mov bx,filehandle
+    mov cx,4000
+    lea dx,buffer
+    int 21h
+    mov fileSize,ax
+    mov bx,fileSize
+    mov [buffer + bx],"$"
+    mostrarCadena buffer
+    xor bx,bx 
+
+    
+endm
+;##############################################################################
 ;########################## GUARDA UNA CADENA EN UN ARCHIVO ###################
 ;##############################################################################
 escribirCadenaArchivo macro tamanio,cadena
