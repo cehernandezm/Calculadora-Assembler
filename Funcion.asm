@@ -58,8 +58,8 @@ controlEscalaOriginal macro
     cmp [coeficiente2 + 1],0d 
     jne escala2
     mov escala,1d
-    mov limiteSuperior,900d
-    mov limiteSuperiorN,-900d
+    mov limiteSuperior,108d
+    mov limiteSuperiorN,-108d
     mov terminarTemp,0d
     jmp salto
     escala4:
@@ -78,9 +78,9 @@ controlEscalaOriginal macro
     
     escala2:
         
-        mov escala,1d
-        mov limiteSuperior,2500d
-        mov limiteSuperiorN,-2500d
+        mov escala,20d
+        mov limiteSuperior,2025d
+        mov limiteSuperiorN,-2025d
         mov terminarTemp,0d
         jmp salto
     salto:
@@ -100,8 +100,8 @@ controlEscalaDerivada macro
     cmp [coeficiente2D + 1],0d 
     jne escala2
     mov escala,1d
-    mov limiteSuperior,900d
-    mov limiteSuperiorN,-900d
+    mov limiteSuperior,108d
+    mov limiteSuperiorN,-108d
     mov terminarTemp,0d
     jmp salto
 
@@ -139,8 +139,8 @@ controlEscalaIntegral macro
     cmp [coeficiente2I + 1],0d 
     jne escala2
     mov escala,1d
-    mov limiteSuperior,900d
-    mov limiteSuperiorN,-900d
+    mov limiteSuperior,108d
+    mov limiteSuperiorN,-108d
     mov terminarTemp,0d
     jmp salto
     escala4:
@@ -433,8 +433,7 @@ graphOriginal macro
 
         mov bl,temp2
         analizarCoeficiente coeficiente2,2d
-        cmp dx,-1d 
-        je cero 
+        
 
         mov bl,temp2
         analizarCoeficiente coeficiente1,1d
@@ -488,6 +487,7 @@ graphOriginal macro
         
         cero: 
             pop cx 
+        
         salto:
             
             
@@ -839,6 +839,9 @@ analizarCoeficiente macro coeficiente,exponente
     cmp dx,0d 
     je salto 
     
+    cmp terminarTemp,0d 
+    je saltoY
+
     mov dx,-1d
     
     jmp saltoY
@@ -897,6 +900,8 @@ analizarCoeficienteIntegral macro coeficiente,exponente
     cmp dx,0d 
     je salto 
     
+    cmp terminarTemp,0d 
+    je saltoY
     mov dx,-1d
     
     jmp saltoY
