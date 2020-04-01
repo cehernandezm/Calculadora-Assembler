@@ -1,5 +1,6 @@
 
 include Funcion.asm
+include Files.asm
 ;##############################################################################
 ;########################## MOSTRAR UNA CADENA     ###################
 ;##############################################################################
@@ -113,6 +114,13 @@ endm
         temp3 db ?
         valor db 5 DUP("$")
         valor2 db 5 DUP("$")
+    ;######################################### ARCHIVOS ############################################################################
+
+        subReporte db "C:\p5\reporte2.txt",0
+        stringfx db "f(x) = "
+        stringfpx db "f'(x) = "
+        filehandle dw ?
+        stringCa db 2 DUP(0),"$"
 .code
 
 inicio:
@@ -199,8 +207,8 @@ inicio:
         ;####################################################################################################################
         graficarFuncion:
             clearScreen
-            ;cmp flagFuncion,0d
-            ;je noHayFuncion
+            cmp flagFuncion,0d
+            je noHayFuncion
 
             mostrarCadena msgMenuGrafica
             
@@ -246,6 +254,7 @@ inicio:
             
             controlEscalaOriginal
             graphOriginal
+            reporteOriginal
             jmp menu
 
 
@@ -287,6 +296,7 @@ inicio:
             
             controlEscalaDerivada
             graphDerivada
+            reporteDerivada
             jmp menu
 
 

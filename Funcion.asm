@@ -1211,7 +1211,7 @@ endm
 mostrarSigno macro signo
     LOCAL positivo,salto
     cmp signo,0d
-    je positivo 
+    je positivo
     mostrarCaracter '-' 
     jmp salto
 
