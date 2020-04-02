@@ -112,6 +112,7 @@ endm
         temp db ?
         temp2 db ?
         temporalY dw ?
+        temporalB dw ?
         temp3 db ?
         valor db 5 DUP("$")
         valor2 db 5 DUP("$")
@@ -156,6 +157,7 @@ endm
         minutos DB ?,'$'
         segundos DB ?,'$'
     ;##################################################### ANALIZADOR ########################
+        cantSimbolos db 0
         msgArchivo db "Ingrese el nombre del archivo: $"
         msgOpenError db 10,"No se pudo Abrir el archivo",10,"$"
         msgErrorLexico db 10,"No se reconoce el Caracter: $"

@@ -34,6 +34,9 @@ corregirDireccion macro
     cmp bx,1d 
     je error 
     analisisSintactico
+    cmp bx,1d 
+    je error
+    convertirPostFijo
     jmp fin
 
     error: 
@@ -158,8 +161,163 @@ analisisSintactico macro
         jmp fin 
     
     salto:
+        cmp dx,1d 
+        je error
         mov bx,0d
 
     fin: 
 endm
 
+
+;##############################################################################
+;####################            POSTFIJO ###########
+;##############################################################################
+
+convertirPostFijo macro
+    LOCAL recursividad,seguir,fin,positivo,negativo,multiplicacion,division
+    mov cantSimbolos,0d
+    xor bx,bx
+    xor dx,dx
+    xor ax,ax
+    recursividad:
+        cmp bx,fileSize
+        jge fin 
+
+        mov cl,[buffer + bx]
+        
+        cmp cl,32d 
+        je seguir 
+        cmp cl,10d 
+        je seguir 
+
+        
+        cmp cl,'+' 
+        je positivo
+        cmp cl,'-' 
+        je negativo
+        cmp cl,'*' 
+        je multiplicacion
+        cmp cl,'/' 
+        je division      
+        push bx 
+        mov bx,ax
+        mov [postFijo + bx],cl
+        pop bx
+        inc ax
+        jmp seguir 
+
+        positivo:
+            precedenciaDeOperadores 1d,'+'
+            inc ax
+            jmp seguir 
+        
+        negativo:
+            precedenciaDeOperadores 1d,'-' 
+            inc ax 
+            jmp seguir
+
+        multiplicacion:
+            precedenciaDeOperadores 2d,'*' 
+            inc ax 
+            jmp seguir
+        
+         division:
+            precedenciaDeOperadores 2d,'/' 
+            inc ax 
+        seguir:
+            inc bx
+            jmp recursividad 
+    
+
+
+    fin:
+    
+
+    vaciarPila
+    mov bx,ax 
+    mov [postFijo + bx],"$"
+    mostrarCaracter 10d
+    mostrarCadena postFijo 
+endm
+
+;##############################################################################
+;####################            PRECEDENCIA DE OPERADORES  ###########
+;##############################################################################
+precedenciaDeOperadores macro operador,signo
+    LOCAL vacio,igual,fin,mayor
+    cmp cantSimbolos,0d
+    je vacio
+
+    pop cx
+    cmp cl,operador
+    je igual
+    
+    cmp cl,operador
+    jl mayor
+
+    push cx
+    mov temporalB,bx 
+    vaciarPila
+    mov bx,temporalB
+
+    jmp vacio
+
+    igual:
+        push bx 
+        mov bx,ax 
+        mov [postFijo + bx],ch
+        pop bx 
+
+        mov cl,operador
+        mov ch,signo
+        push cx 
+        jmp fin
+
+    mayor:
+        dec ax
+        push cx
+        inc cantSimbolos
+        mov cl,operador
+        mov ch,signo
+        push cx 
+        jmp fin
+
+    vacio:
+        dec ax
+        inc cantSimbolos
+        mov cl,operador
+        mov ch,signo
+        push cx
+    
+    fin:
+endm
+
+;##############################################################################
+;#################### VACIA LA PILA CON OPERADORES RESTANTES ###########
+;##############################################################################
+vaciarPila macro
+    LOCAL recursividad,salto,fin,positivo
+    xor bx,bx 
+    mov bl,cantSimbolos 
+
+    recursividad:
+        cmp bx,0d 
+        jle salto
+
+        pop cx 
+
+        push bx
+        mov bx,ax 
+        mov [postFijo + bx],ch
+        pop bx 
+        inc ax
+            
+        jmp fin
+
+        fin:
+            dec cantSimbolos
+            dec bx
+            jmp recursividad
+    
+    salto: 
+endm 
