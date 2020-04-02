@@ -17,7 +17,7 @@ abrirArchivo macro nombre
     LOCAL openError,salida
     mov ah,3Dh
     xor al,al
-    lea dx,[fileAdress] 
+    lea dx,[nombre] 
     int 21h
     jc openError
       

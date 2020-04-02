@@ -42,7 +42,6 @@ endm
 ;##############################################################################
 ingresarCadena macro variable
     xor ax,ax
-    
     mov ah,0AH               
     lea dx,variable
     int 21h
@@ -69,13 +68,13 @@ endm
         msgCoeficiente0 db 10,"Coeficiente de x0: $"
 
         msgConstante db 10,"Ingrese el valor de C: $"
-
+        msgResultado db 10,"Resultado: $"
         msgValorInicial db 10,"Ingrese el valor Inicial: $"
         msgValorFinal db 10,"Ingrese el valor Final: $"
         msgErrorCoeficiente db 10,"Se ingreso un valor erroneo $"
         msgErrorFuncion db 10,"No hay funcion en memoria $"
         msgErrorTamanios db 10,"El limite inferior tiene que ser menor que el limite mayor $"
-
+        msgErrorComa db 10,"La cadena tiene que terminar con: ",59
     ;############################################# FUNCIONES ##################################################################
         flagFuncion db 2 DUP(0)
         
@@ -165,6 +164,7 @@ endm
         msgOpenError db 10,"No se pudo Abrir el archivo",10,"$"
         msgErrorLexico db 10,"No se reconoce el Caracter: $"
         msgErrorSintactico db 10,"Error Sintactico: $"
+        ;direccion db 50 DUP('$')
         direccion db "####C:\p5\prueba.txt##$"
         fileAdress db 50 DUP(0)
 .code
@@ -429,6 +429,8 @@ inicio:
             ;mostrarCadena msgArchivo 
             ;ingresarCadena direccion
             corregirDireccion
+            ingresarCaracter
+            jmp menu
     
     
     salir:

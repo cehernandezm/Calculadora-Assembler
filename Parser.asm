@@ -23,6 +23,7 @@ corregirDireccion macro
 
 
     salida:
+
     abrirArchivo fileAdress
     cmp bx,0d
     je error 
@@ -53,9 +54,18 @@ endm
 ;########################## VERIFICA QUE TODOS LOS CARACTERES ###################
 ;##################################### LOS ACEPTE EL LENGUAJE ###################
 analisisLexico macro
-    LOCAL salto,recursividad,error,fin,seguir
-    xor bx,bx
+    LOCAL salto,recursividad,error,fin,seguir,errorComa
+    mov bx,fileSize
+    dec bx
+    mov fileSize,bx
+    mov cl,[buffer + bx]
 
+    cmp cl,59d
+    jne errorComa
+
+
+    xor bx,bx
+    
     recursividad:
         cmp bx,fileSize
         jge salto 
@@ -86,6 +96,12 @@ analisisLexico macro
         seguir:
         inc bx
         jmp recursividad 
+    
+    
+    errorComa:
+        mov bx,1d 
+        mostrarCadena msgErrorComa
+        jmp fin
     
     error:
         mov bx,1d
@@ -200,6 +216,7 @@ convertirPostFijo macro
         je multiplicacion
         cmp cl,'/' 
         je division      
+        
         push bx 
         mov bx,ax
         mov [postFijo + bx],cl
@@ -329,13 +346,13 @@ endm
 ;####################            EJECUTAR EXPRESION ###########
 ;##############################################################################
 ejecutarExpresion macro
-    LOCAL recursividad,fin,positivo,salto,negativo,multiplicacion,division
+    LOCAL recursividad,fin,positivo,salto,negativo,multiplicacion,division,salto2
     pop ax
     mov limite,ax
     xor bx,bx
     recursividad:
-    cmp bx,limite 
-    jge fin 
+        cmp bx,limite 
+        jge fin 
         xor ax,ax
         xor cx,cx
         mov cl,[postFijo + bx]
@@ -409,9 +426,65 @@ ejecutarExpresion macro
     jmp recursividad
     fin:
 
+    mostrarCadena msgResultado
     
-    
+    pop ax
+
+    cmp ax,0d 
+    jge salto2
+
+    push ax 
+    mostrarCaracter '-'
     pop ax 
-    add ax,48d 
-    mostrarCaracter al
+    neg ax 
+
+    salto2:
+
+    printNumero
+endm
+
+
+;##############################################################################
+;####################            PRINT NUMERO ###########
+;##############################################################################
+printNumero macro
+    LOCAL unidad,decena,fin
+    xor cx,cx 
+    xor bx,bx
+    
+    cmp ax,10d
+    jl cero 
+
+    decena:
+        cmp al,0d 
+        je unidad 
+
+        xor dx,dx 
+        mov bx,10d 
+        div bx
+        push dx 
+        inc cx
+        
+        jmp decena
+
+    cero:
+        add ax,48d 
+        mostrarCaracter al
+        jmp fin 
+
+
+    unidad:
+        
+        cmp cx,0d 
+        je fin 
+            pop dx
+            add dx,48d 
+            mostrarCaracter dl
+        dec cx
+        jmp unidad
+
+    fin:
+
+    
+
 endm
