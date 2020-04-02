@@ -37,6 +37,7 @@ corregirDireccion macro
     cmp bx,1d 
     je error
     convertirPostFijo
+    ejecutarExpresion
     jmp fin
 
     error: 
@@ -235,9 +236,10 @@ convertirPostFijo macro
 
     vaciarPila
     mov bx,ax 
+    push ax
     mov [postFijo + bx],"$"
     mostrarCaracter 10d
-    mostrarCadena postFijo 
+    mostrarCadena postFijo
 endm
 
 ;##############################################################################
@@ -321,3 +323,95 @@ vaciarPila macro
     
     salto: 
 endm 
+
+
+;##############################################################################
+;####################            EJECUTAR EXPRESION ###########
+;##############################################################################
+ejecutarExpresion macro
+    LOCAL recursividad,fin,positivo,salto,negativo,multiplicacion,division
+    pop ax
+    mov limite,ax
+    xor bx,bx
+    recursividad:
+    cmp bx,limite 
+    jge fin 
+        xor ax,ax
+        xor cx,cx
+        mov cl,[postFijo + bx]
+        
+        
+        
+        cmp cl,'+'
+        je positivo
+
+        cmp cl,'-'
+        je negativo
+
+        cmp cl,'*'
+        je multiplicacion
+
+        cmp cl,'/'
+        je division
+        
+        mov ax,cx 
+        sub ax,48d
+        mov cx,10d
+        mul cx
+        
+
+        inc bx
+        xor cx,cx 
+        mov cl,[postFijo + bx]
+        sub cl,48d
+        add ax,cx
+
+        push ax 
+        jmp salto
+
+        division:
+            pop ax
+            mov cx,ax 
+            
+            pop ax
+            div cx 
+            
+            push ax
+            jmp salto
+
+        multiplicacion:
+            pop ax
+            mov dx,ax
+            pop ax 
+            mul dx
+            push ax 
+            jmp salto
+
+
+        negativo:
+            pop ax
+            mov dx,ax
+            pop ax 
+            sub ax,dx
+            push ax 
+        jmp salto
+
+        positivo:
+            pop ax
+            mov dx,ax
+            pop ax 
+            add ax,dx
+            push ax 
+
+        salto: 
+        inc bx
+
+    jmp recursividad
+    fin:
+
+    
+    
+    pop ax 
+    add ax,48d 
+    mostrarCaracter al
+endm

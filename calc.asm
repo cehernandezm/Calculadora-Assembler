@@ -156,6 +156,9 @@ endm
         horas DB ?, '$'
         minutos DB ?,'$'
         segundos DB ?,'$'
+
+        resultado dw ?
+        limite dw ?
     ;##################################################### ANALIZADOR ########################
         cantSimbolos db 0
         msgArchivo db "Ingrese el nombre del archivo: $"
