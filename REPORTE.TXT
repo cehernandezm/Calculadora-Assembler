@@ -8,15 +8,15 @@ CARLOS EDUARDO HERNANDEZ MOLINA
 REPORTE PRACTICA 3
 
 
-Fecha: 31/3/2020
-Hora: 22:42:33
+Fecha: 2/4/2020
+Hora: 16:17:6
 
 
 Funcion Original:
-f(x) = +00x4   +00x3   +00x2   +00x1   +00
+f(x) = +00x4   +03x3   +00x2   +02x1   +01
 
 Funcion Derivada:
-f'(x) = +00x3   +00x2   +00x1   +00
+f'(x) = +00x3   +09x2   +00x1   +02
 
 Funcion Integral:
-F(x) = +00/00x5   +00/00x4   +00/00x3   +00/00x2   +00/00x1   
+F(x) = +00/05x5   +03/04x4   +00/03x3   +02/02x2   +01/01x1   

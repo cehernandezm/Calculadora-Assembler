@@ -164,8 +164,8 @@ endm
         msgOpenError db 10,"No se pudo Abrir el archivo",10,"$"
         msgErrorLexico db 10,"No se reconoce el Caracter: $"
         msgErrorSintactico db 10,"Error Sintactico: $"
-        ;direccion db 50 DUP('$')
-        direccion db "####C:\p5\prueba.txt##$"
+        direccion db 50 DUP('$')
+        ;direccion db "####C:\p5\prueba.txt##$"
         fileAdress db 50 DUP(0)
 .code
 
@@ -274,7 +274,9 @@ inicio:
             cmp bl,'2'
             je graficarDerivada
             cmp bl,'3' 
-            je graficarIntegral 
+            je graficarIntegral
+            cmp bl,'4'
+            je menu 
             jmp graficarFuncion
 
 
@@ -426,8 +428,8 @@ inicio:
         ;####################################################################################################################
         modoCalculadora:
             clearScreen
-            ;mostrarCadena msgArchivo 
-            ;ingresarCadena direccion
+            mostrarCadena msgArchivo 
+            ingresarCadena direccion
             corregirDireccion
             ingresarCaracter
             jmp menu
